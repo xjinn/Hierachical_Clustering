@@ -1,0 +1,64 @@
+---
+title: "Hierarchical Clustering using Average Linkage"
+author: "Fang Zhou"
+date: "November 22, 2018"
+output: html_document
+---
+
+### load data and omit the
+```{r load data,eval=TRUE}
+df=USArrests
+```
+
+
+### View the first six lines of the dataframe
+```{r view head of data,eval=TRUE}
+head(df)
+```
+
+
+### Make a summary of the data
+```{r summarize data,eval=TRUE}
+summary(df)
+```
+
+### Standardize different variables and view the new data
+```{r standardize data,eval=TRUE}
+df <- scale(df)
+head(df)
+```
+
+### Great! Now we can come to the clustering!
+### In R, we use package 'cluster' to do agglomerative hierarchical clustering.
+
+```{r cluster and draw dendrogram plot,eval=TRUE}
+### compute the dissimilarity values
+d <- dist(df, method = "euclidean")
+
+### Hierarchical clustering using Average Linkage
+library('cluster')
+hc1 <- hclust(d, method = "average" )
+
+# Plot the obtained dendrogram
+plot(hc1, cex = 0.6, hang = -1)
+
+```
+
+### The height of the cut to the dendrogram controls the number of clusters obtained. It plays the same role as the k in k-means clustering. Thus, we need to decide the value of k first.
+
+### We use Elbow Method to determine the number of clusters obtained.
+```{r determine number of clusters,eval=TRUE}
+### use package 'factoextra' to do elbow method
+library('factoextra')
+
+###  plot within-cluster sum of squares(wss) against k
+fviz_nbclust(df, FUN = hcut, method = "wss")
+```
+
+### From the plot above we can see that if k < 4, the change of WSS is very fast; While k > 4, the change of WSS becomes slow. Thus, we can determine the number of clusters id 4.
+
+### Now we divide the states into 4 clusters based on the outcomes of agglomerative hierarchical clustering.
+```{r divide 4 clusters, eval=TRUE}
+plot(hc1, cex = 0.6)
+rect.hclust(hc1, k = 4, border = 2:5)
+```
