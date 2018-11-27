@@ -654,7 +654,7 @@ plt.show()
 
 4. [*Determining the number of clusters in a data set*](https://en.wikipedia.org/wiki/Determining_the_number_of_clusters_in_a_data_set)
 
-# Linkage to Github
+# Link to Github
 All the materials can be found in our [Github](https://github.com/STATS506Group15/Hierarchical_Clustering_Average).
 
 # To do list
