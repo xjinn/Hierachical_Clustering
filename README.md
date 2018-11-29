@@ -2,5 +2,5 @@
 # A Tutorial on (Agglomertive) Hierachical Clustering
 # Tools: Python, R, Stata
 # Members: Shuqing Huang, Jin Xi, Fang Zhou
-# For peer review, please check the folder: Draft and check the file: STATS506_Group_Project_Group15_draft.html
+# For peer review, please check the file 'STATS506_Group_Project_Group15_draft.html' in the 'Draft' folder.
 # Please download the file before take a look of it.
