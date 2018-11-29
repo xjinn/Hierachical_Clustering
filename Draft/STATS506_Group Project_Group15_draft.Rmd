@@ -1,8 +1,15 @@
 ---
 title: "(Agglomertive) Hierarchical Clustering using Average Linkage"
 author: 'Group 15: Shuqing Huang, Jin Xi, Fang Zhou'
-date: "2018/11/26"
-output: html_document
+date: "`r Sys.Date()`"
+output: 
+  html_document:
+    toc: true # table of content true
+    toc_float: true
+    toc_depth: 2  # upto three depths of headings (specified by #, ## and ###)
+    number_sections: false  ## if you want number sections at each table header
+    theme: lumen  # many options for theme, this one is my favorite.
+    highlight: tango  # specifies the syntax highlighting style
 ---
 
 $$ 
@@ -24,7 +31,9 @@ $$
 # Agglomerative Hierarchical Clustering
 In real world, grouping similar items is quite useful, such as recommending similar articals to users who are interested in specific news, and recommending specific products to groups of customers based on similar behaviors. ***Hierarchical clustering*** is one of the effective methods to achieve this goal.  
 
-***Hierarchical clustering*** is an unsupervised learning algorithm that groups similar objects into groups called clusters. The endpoint is a set of clusters, where each cluster is distinct from each other cluster, and the objects within each cluster are broadly similar to each other. There are two types of hierarchical clustering strategies: ***Agglomerative*** and ***Divisive***. In ***Agglomerative Clustering***, we regard each observation as a data point and define it as a cluster at the beginning. Then, pairs of clusters are merged as one moves up the hierarchy, depending on the distance between each other.
+> ***Hierarchical clustering*** is an unsupervised learning algorithm that groups similar objects into groups called clusters. The endpoint is a set of clusters, where each cluster is distinct from each other cluster, and the objects within each cluster are broadly similar to each other. 
+
+There are two types of hierarchical clustering strategies: ***Agglomerative*** and ***Divisive***. In ***Agglomerative Clustering***, we regard each observation as a data point and define it as a cluster at the beginning. Then, pairs of clusters are merged as one moves up the hierarchy, depending on the distance between each other.
 
 
 ## Average Linkage Method
@@ -339,7 +348,7 @@ data_scaled.std(axis=0)
 
 
 
-### Perform the Hierarchical Clustering¶
+### Perform the Hierarchical Clustering
 
 
 ```python
@@ -433,7 +442,7 @@ plt.show()
 
 ![](output_20_0.png)
 
-According to [this](http://nbviewer.jupyter.org/github/OxanaSachenkova/hclust-python/blob/master/hclust.ipynb), the heatmap can be plotted
+According to [this](http://nbviewer.jupyter.org/github/OxanaSachenkova/hclust-python/blob/master/hclust.ipynb), we can visualize the distance between clusters by plotting the heatmap
 
 ```python
 # the following code is modified based on
@@ -510,22 +519,18 @@ plt.xlabel('Number of cluster')
 plt.ylabel('Total intra-cluster variation')
 plt.plot(cluster_range, wss, marker = "x")
 
-print("clusters:", 4)
 ```
-
-    clusters: 4
-
 
 
 ![](output_24_1.png)
 
 
-
+To help find the "elbow", we can check the 2nd derivative of the WSS
 ```python
 accele = np.diff(wss, 2) 
 ```
 
-
+The gain in explained variance reduces significantly from 3 to 4 to 5. So, optimal number of clusters could be either 4 or 5.
 ```python
 accele
 ```
