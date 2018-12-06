@@ -55,7 +55,8 @@ Elbow method is one of the cluster stopping rules for deciding the optimal numbe
 The formula to calculate the total intra-cluster variation (WSS): $$ \sum_{i=1}^k\sum_{\vec{x}\in S_i}(\vec{x}-\mu_i)^2 $$ where we partition a set of observations $\vec{x} = (x_1, x_2, ., x_n)$ into k ($\leq n$) clusters $\vec{S} = {S_1, S_2, ., S_k}$
 
 ## Dataset Used
-We'll use the built-in R data set [USArrests](https://www.kaggle.com/deepakg/usarrests), which contains statistics in arrests per 100,000 residents for assault, murder, and rape in each of the 50 US states in 1973. It also gives the percent of the population living in urban areas. Thus, it is a dataframe with 50 observations on 4 variables.
+We'll use the built-in R data set [USArrests](https://www.kaggle.com/deepakg/usarrests), which contains statistics in arrests per 100,000 residents for assault`Assault`, murder`Murder`, and rape`Rape` in each of the 50 US states in 1973. It also gives the percent of the population living in urban areas`UrbanPop`. Thus, it is a dataframe with 50 observations on 4 variables.  
+Hierarchical clustering can be applied to the situation when underlying data has a hierarchical structure. Hierarchical clustering's time complexity is generally in the order of O(n 2 logn), n being the number of data points. So, when the number of data points is very large, we may not want to rely on it.
 
 # Methods {.tabset .tabset-fade .tabset-pills} 
 
@@ -66,7 +67,8 @@ R packages required:
 ```{r}
 ### use package 'cluster' to do hierarchical clustering
 library('cluster')
-### use package 'factoextra' to do elbow method
+### use package 'factoextra'and 'dplyr' to do elbow method
+library('dplyr')
 library('factoextra')
 ```
 
@@ -97,6 +99,7 @@ df <- scale(df)
 head(df)
 ```
 
+
 ### Agglomerative Hierarchical Clustering
 
 Great! Now we can come to the clustering!
@@ -122,30 +125,58 @@ plot(hc1, cex = 0.6, hang = -1)
 
 The height of the cut to the dendrogram controls the number of clusters obtained. It plays the same role as the k in k-means clustering. Thus, we need to decide the value of k first.
 
-We use Elbow Method by package 'factoextra' to determine the number of clusters obtained.
+We use Elbow Method to determine the number of clusters obtained.
+
+Firstly, write a finction f to compute the WSS of each k.
 
 ```{r determine number of clusters,eval=TRUE}
-###  plot within-cluster sum of squares(wss) against k
-fviz_nbclust(df, FUN = hcut, method = "wss")
+###  write a function to compute WSS of each k
+f=function(k){
+sub_grp <- cutree(hc1, k)
+df=as.data.frame(df)
+df2=df %>%
+  mutate(cluster = sub_grp)%>%
+  group_by(cluster)%>%
+  summarize(M=mean(Murder),A=mean(Assault),U=mean(UrbanPop),R=mean(Rape))
+df1=df %>%
+  mutate(cluster = sub_grp)
+df3=left_join(df1,df2,by="cluster")
+D=(df3$Murder-df3$M)^2+(df3$Assault-df3$A)^2+(df3$UrbanPop-df3$U)^2+(df3$Rape-df3$R)^2
+df4=cbind(df3,D)
+WSS=sum(df4$D)
+WSS
+}
+
 ```
 
-From the plot above we can see that if k < 4, the change of WSS is very fast; While k > 4, the change of WSS becomes slow. Thus, we can determine the number of clusters id 4.
+Then, plot the WSS against k to find the inflection point.
 
-Now we divide the states into 4 clusters based on the outcomes of agglomerative hierarchical clustering.
+```{r Elbow Method plot, eval=TRUE}
+### plot WSS against each k from 1 to 10
+WSS=c()
+for (i in 1:10){WSS[i]=f(i)}
+K=c(1:10)
+SSW_K=as.data.frame(cbind(WSS,K))
+p=ggplot(SSW_K, aes(x=K, y=WSS)) + geom_line() + geom_point()
+p + scale_x_continuous(breaks=K, labels = K) + labs(title = "Elbow Method")
+```
 
-```{r divide 4 clusters, eval=TRUE}
+From the plot above we can see that if k < 5, the change of WSS is very fast; While k > 5, the change of WSS becomes slow. Thus, we can determine the number of clusters is 5.
+
+Now we divide the states into 5 clusters based on the outcomes of agglomerative hierarchical clustering.
+
+```{r divide 5 clusters, eval=TRUE}
 plot(hc1, cex = 0.6)
-rect.hclust(hc1, k = 4, border = 2:5)
+rect.hclust(hc1, k = 5, border = 2:5)
 ```
 
+## STATA
 
-## Stata
-
-### Data Prepartion
+### Data Preparation
 
 Like R and Python, we should load the data into STATA first. We use `import delimited` to do that.
 
-```{r load data2, eval=FALSE}
+```{r load data1, eval=FALSE}
 clear
 set more off 
 
@@ -154,7 +185,7 @@ import delimited "./USArrests.csv"
 
 `list in 1/6` command allows us to view the first 6 rows of the data. We use `rename` command to change the variable name and label it using `label`.  
 
-```{r view head of data2, eval=FALSE}
+```{r view head of data1, eval=FALSE}
 list in 1/6
 
     +-------------------------------------------------+
@@ -175,7 +206,7 @@ label variable state "State"
 
 `describe` could display the type of different variables, and `summarize` shows us the summary information of the data.  
 
-```{r summarize data2, eval=FALSE}
+```{r summarize data1, eval=FALSE}
 describe 
 
 Contains data
@@ -212,9 +243,9 @@ summarize
 
 As the variable *state* stored in string format, there is no summary data.    
 
-To standardize data, we use `std` in STATA. Here we use a loop to standardize different variables.
+As we don’t want the clustering algorithm to depend to an arbitrary variable unit, we start by standardizing the data. To standardize data, we use `std` in STATA. Here we use a loop to standardize different variables.
 
-```{r standardize data2, eval=FALSE}
+```{r standardize data1, eval=FALSE}
 foreach var in murder assault urbanpop rape {
 	egen `var'_new = std(`var')
 	}	
@@ -240,16 +271,15 @@ list in 1/6
 
 ```
 
-
 ### Perform Agglomerative Hierarchical Clustering
 
 Great! Now we can come to the clustering! In STATA, we use `cluster linkage variables, name(name of resulting cluster analysis)` to complete the task, and option `dendrogram` helps us visualize the cluster. 
 
-```{r clustering, eval=FALSE}
+```{r cluster dendrogram, eval=FALSE}
 cluster averagelinkage murder_new assault_new urbanpop_new rape_new, name(cluster2)
-cluster dendrogram cluster2, labels(state) xlabel(, angle(90) labsize(*.75))
+cluster dendrogram cluster2, labels(state) xlabel(, angle(90) labsize(*.75)) title("Hierarchical Clustering Dendrogram")
 ```
-![](dendrogram.png)
+![](Graph1.png)
 
 ### Determining the Number of Clusters
 
@@ -297,34 +327,19 @@ forvalues k = 1(1)10 {
   }
 ```
 
-To view the matrix, we use `matrix list`.
-
-```{r WSS matrix, eval=FALSE}
-matrix list WSS
-
-WSS[10,2]
-             k        WSS
- r1          1        196
- r2          2   102.8624
- r3          3  97.680776
- r4          4  76.489752
- r5          5   54.09596
- r6          6   47.05392
- r7          7  43.012789
- r8          8  38.752172
- r9          9  36.477854
-r10         10  32.793452
-
-```
-
 Here is our Elbow plot.
 ```{r plot, eval=FALSE}
-_matplot WSS, columns(2 1) connect(l) xlabel(#10) name(plot1, replace) 
+_matplot WSS, columns(2 1) connect(l) xlabel(#10) name(plot1, replace) title ("Optimal number of cluster")
 ```
-![](Elbow.png)
-As the graph suggests, after 5 clusters, the reducing speed of WSS becomes much slower. Hence, the best number of clusters is 5 according to Elbow method.
+![](graph2.png)
+As the graph suggests, after 5 clusters, the reducing speed of WSS becomes much slower. Hence, the best number of clusters is 5 according to Elbow method. We use `line` to superimpose a horizontal line on the plot.
 
-![](cluster result.png)
+```{r clustering, eval=FALSE}
+cluster dendrogram cluster2, labels(state) xlabel(, angle(90) labsize(*.75)) title("Hierarchical Clustering Dendrogram") yline (2)
+```
+
+![](Graph3.png)
+
 
 ## Python
 
@@ -680,6 +695,10 @@ plt.show()
 
 ![](output_34_0.png)
 
+# Summary
+
+From the five clusters shown in the figures above, we can see the outcomes of hierarchical clustering have some relationship with geographic locations of the 50 states. For example, most states in the south are divided into one cluster and Alaska is divided into another cluster itself. 
+![]()
 # References
 1. [*SciPy Hierarchical Clustering and Dendrogram Tutorial*](https://joernhees.de/blog/2015/08/26/scipy-hierarchical-clustering-and-dendrogram-tutorial/)
 
@@ -689,9 +708,4 @@ plt.show()
 
 4. [*Determining the number of clusters in a data set*](https://en.wikipedia.org/wiki/Determining_the_number_of_clusters_in_a_data_set)
 
-# Link to Github
-All the materials can be found in our [Github](https://github.com/STATS506Group15/Hierarchical_Clustering_Average).
 
-# To do list
-
-As we can see, the result generated by STATA is varied from other methods (R & Python), though the underlying mechanism is the same using within group sum of squares (WSS) to decide the best grouping cut-off point. Because of the conflict, we could not achieve a precise and common conclusion at this moment. Hence, we will try to figure out the reason of variation and resolve the conflict, and provide a comprehensive result analysis together with a conclusion later on.
