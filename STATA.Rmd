@@ -1,7 +1,7 @@
 ---
 title: "Hierarchical Clustering using Average Linkage"
 author: 'Group 15: Shuqing Huang, Jin Xi, Fang Zhou'
-date: "2018/11/20"
+date: "2018/12/06"
 output: html_document
 ---
 
@@ -75,7 +75,7 @@ summarize
 
 As the variable *state* stored in string format, there is no summary data.    
 
-To standardize data, we use `std` in STATA. Here we use a loop to standardize different variables.
+As we don’t want the clustering algorithm to depend to an arbitrary variable unit, we start by standardizing the data. To standardize data, we use `std` in STATA. Here we use a loop to standardize different variables.
 
 ```{r standardize data, eval=FALSE}
 foreach var in murder assault urbanpop rape {
@@ -105,11 +105,11 @@ list in 1/6
 
 Great! Now we can come to the clustering! In STATA, we use `cluster linkage variables, name(name of resulting cluster analysis)` to complete the task, and option `dendrogram` helps us visualize the cluster. 
 
-```{r clustering, eval=FALSE}
+```{r cluster dendrogram, eval=FALSE}
 cluster averagelinkage murder_new assault_new urbanpop_new rape_new, name(cluster2)
-cluster dendrogram cluster2, labels(state) xlabel(, angle(90) labsize(*.75))
+cluster dendrogram cluster2, labels(state) xlabel(, angle(90) labsize(*.75)) title("Hierarchical Clustering Dendrogram")
 ```
-![](dendrogram.png)
+![](Graph1.png)
 Then we generate 1 to 10 clusters solutions for states and preparign for Elbow methods comparison using `groups` function. The states will be assigned to different groups.
 ```{r generate cluster solutions, eval=FALSE}
 cluster gen avg = groups(1/10), name(cluster2)
@@ -152,34 +152,18 @@ forvalues k = 1(1)10 {
   }
 ```
 
-To view the matrix, we use `matrix list`.
-
-```{r WSS matrix, eval=FALSE}
-matrix list WSS
-
-WSS[10,2]
-             k        WSS
- r1          1        196
- r2          2   102.8624
- r3          3  97.680776
- r4          4  76.489752
- r5          5   54.09596
- r6          6   47.05392
- r7          7  43.012789
- r8          8  38.752172
- r9          9  36.477854
-r10         10  32.793452
-
-```
-
 Here is our Elbow plot.
 ```{r plot, eval=FALSE}
-_matplot WSS, columns(2 1) connect(l) xlabel(#10) name(plot1, replace) 
+_matplot WSS, columns(2 1) connect(l) xlabel(#10) name(plot1, replace) title ("Optimal number of cluster")
 ```
-![](Elbow.png)
-As the graph suggests, after 5 clusters, the reducing speed of WSS becomes much slower. Hence, the best number of clusters is 5 according to Elbow method.
+![](graph2.png)
+As the graph suggests, after 5 clusters, the reducing speed of WSS becomes much slower. Hence, the best number of clusters is 5 according to Elbow method. We use `line` to superimpose a horizontal line on the plot.
 
-![](cluster result.png)
+```{r clustering, eval=FALSE}
+cluster dendrogram cluster2, labels(state) xlabel(, angle(90) labsize(*.75)) title("Hierarchical Clustering Dendrogram") yline (2)
+```
+
+![](Graph3.png)
 
 
 
