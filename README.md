@@ -12,12 +12,12 @@ This repo contains all group 15's project files for this tutorial.
   - [Python/Figures](./Python/Figures) : All figures should be included in Markdown.
   
 ### Draft
-  - [Draft/STATS506_Group Project_Group15_draft.Rmd](./Draft/STATS506_Group Project_Group15_draft.Rmd) : R Markdown file for the draft
-  - [Draft/STATS506_Group Project_Group15_draft.html](./Draft/STATS506_Group Project_Group15_draft.html) : Html file for the draft
+  - [Draft/STATS506_Group_Project_Group15_draft.Rmd](./Draft/STATS506_Group Project_Group15_draft.Rmd) : R Markdown file for the draft
+  - [Draft/STATS506_Group_Project_Group15_draft.html](./Draft/STATS506_Group Project_Group15_draft.html) : Html file for the draft
   - [Draft/Figures](./Draft/Figures) : All figures should be included in R Markdown. Please put the `.Rmd` file inside this folder if you try to run the `.Rmd` file
 
 
 ### Final Draft
-  - [Final Draft/STATS506_Group Project_Group15_draft.Rmd](./Final Draft/STATS506_Group_Project_Group15_final.Rmd) : R Markdown file for our final draft
-  - [Final Draft/STATS506_Group Project_Group15_draft.html](./Final Draft/STATS506_Group_Project_Group15_final.html) : Html file for our final draft
+  - [Final Draft/STATS506_Group_Project_Group15_draft.Rmd](./Final Draft/STATS506_Group_Project_Group15_final.Rmd) : R Markdown file for our final draft
+  - [Final Draft/STATS506_Group_Project_Group15_draft.html](./Final Draft/STATS506_Group_Project_Group15_final.html) : Html file for our final draft
   - [Final Draft/Figures](./Final Draft/Figures) : All figures should be included in R Markdown. Please put the `.Rmd` file inside this folder if you try to run the `.Rmd` file
