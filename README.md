@@ -23,3 +23,4 @@ This repo contains all group 15's project files for this tutorial.
   - [Final/STATS506_Group_Project_Group15_draft.Rmd](./Final/STATS506_Group_Project_Group15_final.Rmd) : R Markdown file for our final draft
   - [Final/STATS506_Group_Project_Group15_draft.html](./Final/STATS506_Group_Project_Group15_final.html) : Html file for our final draft
   - [Final/Figures](./Final/Figures) : All figures should be included in R Markdown. Please put the `.Rmd` file inside this folder if you try to run the `.Rmd` file
+
