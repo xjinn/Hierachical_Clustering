@@ -6,6 +6,11 @@ This repo contains all group 15's project files for this tutorial.
 
 ### R
 ### STATA
+
+  - [STATA/STATA.Rmd](./STATA/STATA.Rmd) : R Markdown file for STATA section.
+  - [STATA/STATA.html](./STATA/STATA.html) : Html file for STATA section.
+  - [STATA/Figures](./STATA/Figures) : All figures should be included in R Markdown.
+
 ### Python
  
   - [Python/STATS506_GroupProject_Group15_python.ipynb](./Python/STATS506_GroupProject_Group15_python.ipynb) : Notebook to play with.
