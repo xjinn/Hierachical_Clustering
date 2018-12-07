@@ -56,7 +56,7 @@ The formula to calculate the total intra-cluster variation (WSS): $$ \sum_{i=1}^
 
 ## Dataset Used
 We'll use the built-in R data set [USArrests](https://www.kaggle.com/deepakg/usarrests), which contains statistics in arrests per 100,000 residents for assault`Assault`, murder`Murder`, and rape`Rape` in each of the 50 US states in 1973. It also gives the percent of the population living in urban areas`UrbanPop`. Thus, it is a dataframe with 50 observations on 4 variables.  
-Hierarchical clustering can be applied to the situation when underlying data has a hierarchical structure. Its time complexity is generally in the order of O(n 2 logn), where n is the number of data points. So, when the number of data points is too large, we may not want to rely on Hierarchical clustering.
+Hierarchical clustering can be applied to the situation when underlying data has a hierarchical structure. Its time complexity is generally in the order of $O(n^2 logn)$ , where n is the number of data points. So, when the number of data points is too large, we may not want to rely on Hierarchical clustering.
 
 # Methods {.tabset .tabset-fade .tabset-pills} 
 
